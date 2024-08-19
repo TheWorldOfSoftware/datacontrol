@@ -1,0 +1,8 @@
+# Project Files
+.env
+
+# Build Files
+dist
+
+# NPM
+node_modules
