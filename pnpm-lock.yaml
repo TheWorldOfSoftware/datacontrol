@@ -6,4 +6,34 @@ settings:
 
 importers:
 
-  .: {}
+  .:
+    dependencies:
+      '@worldofsoftware/dotenv-reader':
+        specifier: workspace:*
+        version: link:../../packages/common/dotenv-reader
+    devDependencies:
+      '@eslint/compat':
+        specifier: ^1.1.1
+        version: 1.1.1
+      '@worldofsoftware/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/configs/eslint
+      '@worldofsoftware/eslint-config-typescript':
+        specifier: workspace:*
+        version: link:../../packages/configs/eslint/typescript
+      '@worldofsoftware/prettier-config':
+        specifier: workspace:*
+        version: link:../../packages/configs/prettier
+      '@worldofsoftware/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/configs/typescript
+
+packages:
+
+  '@eslint/compat@1.1.1':
+    resolution: {integrity: sha512-lpHyRyplhGPL5mGEh6M9O5nnKk0Gz4bFI+Zu6tKlPpDUN7XshWvH9C/px4UVm87IAANE0W81CEsNGbS1KlzXpA==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+snapshots:
+
+  '@eslint/compat@1.1.1': {}
