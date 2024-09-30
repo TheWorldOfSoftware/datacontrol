@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@worldofsoftware/dotenv-reader": "workspace:*",
+    "mysql2": "^3.11.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
