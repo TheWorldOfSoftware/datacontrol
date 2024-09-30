@@ -1,1 +1,3 @@
-export default "@worldofsoftware/prettier-config";
+import prettierConfig from "@worldofsoftware/prettier-config";
+
+export default prettierConfig;
