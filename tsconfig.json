@@ -1,0 +1,7 @@
+{
+  "extends": "@worldofsoftware/typescript-config",
+  "include": ["src"],
+  "compilerOptions": {
+    "outDir": "${configDir}/dist"
+  }
+}
