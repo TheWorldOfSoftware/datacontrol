@@ -1,4 +1,5 @@
-import dotenvReader from "@worldofsoftware/dotenv-reader";
-import "./env.js";
+import envLoader from "./env.js";
+import envReader from "@worldofsoftware/dotenv-reader";
 
-dotenvReader.loadEnvFile();
+envReader.loadEnv();
+envLoader.parse();
