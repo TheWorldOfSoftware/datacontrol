@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const env = z.object({
-  HOST_PORT: z.string().transform((value) => Number(value)),
+  HOST_PORT: z.string().regex(/^\d{1,4}$/u),
   MY_SQL_HOST: z.string(),
   MY_SQL_PASSWORD: z.string(),
   MY_SQL_PORT: z.string(),

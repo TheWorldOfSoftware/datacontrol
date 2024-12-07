@@ -1,4 +1,4 @@
-import type { NodeEnvExtension } from "./src/index.ts";
+import type { NodeEnvExtension } from "./src/env.ts";
 
 declare global {
   namespace NodeJS {
