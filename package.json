@@ -17,19 +17,19 @@
   },
   "dependencies": {
     "@worldofsoftware/dotenv-reader": "workspace:*",
-    "fastify": "^5.1.0",
-    "mysql2": "^3.11.3",
-    "zod": "^3.23.8"
+    "fastify": "^5.2.0",
+    "mysql2": "^3.11.5",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@eslint/compat": "^1.1.1",
+    "@eslint/compat": "^1.2.4",
     "@worldofsoftware/eslint-config": "workspace:*",
     "@worldofsoftware/eslint-config-typescript": "workspace:*",
     "@worldofsoftware/prettier-config": "workspace:*",
     "@worldofsoftware/typescript-config": "workspace:*",
-    "eslint": "^9.11.0",
+    "eslint": "^9.17.0",
     "jiti": "^2.4.1",
-    "prettier": "^3.3.3",
+    "prettier": "^3.4.2",
     "typescript": "^5.6.2"
   }
 }
