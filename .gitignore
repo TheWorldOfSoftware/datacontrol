@@ -6,3 +6,7 @@ dist
 
 # NPM
 node_modules
+
+# IDEs
+.vscode
+.vs
