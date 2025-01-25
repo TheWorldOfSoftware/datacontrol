@@ -1,3 +1,3 @@
 export const ExitCode = {
-  serverCrash: 10
+  SERVER_CRASH: 10
 } as const;
