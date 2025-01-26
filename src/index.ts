@@ -1,8 +1,6 @@
-import envLoader from "./env.js";
-import envReader from "@worldofsoftware/dotenv-reader";
+import env from "./env.js";
 
-envReader.loadEnv();
-envLoader.parse();
+env();
 
 const server = await import("./server/index.js");
 
