@@ -1,3 +1,4 @@
+import envReader from "@worldofsoftware/dotenv-reader";
 import { z } from "zod";
 
 const env = z.object({
@@ -15,6 +16,7 @@ const env = z.object({
 
 export type NodeEnvExtension = z.infer<typeof env>;
 
-export default {
-  parse: (): NodeEnvExtension => env.parse(process.env)
-};
+export default function (): NodeEnvExtension {
+  envReader.loadEnv();
+  return env.parse(process.env);
+}
