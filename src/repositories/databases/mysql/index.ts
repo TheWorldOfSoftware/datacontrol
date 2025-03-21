@@ -20,7 +20,7 @@ export default class MySQL implements Database {
 
   public async query<T>(
     query: string
-  ): Promise<ReturnType<typeof Pool.prototype.query<T>>> {
+  ): ReturnType<typeof Pool.prototype.query<T>> {
     this.#pool.throwIfUndefined();
 
     return await this.#pool.query<T>(query);

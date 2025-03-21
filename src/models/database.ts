@@ -1,20 +1,19 @@
+import type { UUID } from "crypto";
+
 export default class Database {
-  public accessor host: string;
+  #id: UUID;
 
-  public accessor username: string;
-
-  public accessor password: string;
-
-  public constructor(
-    host: string,
-    credentials: Readonly<{ username: string; password: string }>
-  ) {
-    this.host = host;
-    this.username = credentials.username;
-    this.password = credentials.password;
+  public get id(): UUID {
+    return this.#id;
   }
 
-  public updatePassword(password: string): void {
-    this.password = password;
+  public host: string;
+
+  public name: string;
+
+  public constructor(id: UUID, host: string, name: string) {
+    this.#id = id;
+    this.host = host;
+    this.name = name;
   }
 }

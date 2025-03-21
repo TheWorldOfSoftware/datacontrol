@@ -1,27 +1,30 @@
+import fastify from "fastify";
 import { ExitCode } from "../constants/exit-codes.js";
 import envReader from "@worldofsoftware/dotenv-reader";
-import fastify from "fastify";
-import root from "./routes/v1/root.js";
+import RootRoute from "./routes/v1/root.js";
+import type { ServerInstance } from "./types/server.js";
 
-const server = fastify({
-  logger: true
-});
+export default class Server {
+  readonly #server: ServerInstance;
 
-server.register(root, { prefix: "/api/v1" });
-
-const init = async (): Promise<void> => {
-  try {
-    const port = envReader.get("HOST_PORT");
-    await server.listen({
-      port: Number(port),
-      listenTextResolver: () => `Server listening on port ${port}.`
+  public constructor() {
+    this.#server = fastify({
+      logger: true
+    }).register((instance) => new RootRoute(instance).register(), {
+      prefix: "/api/v1"
     });
-  } catch (error) {
-    server.log.error(error);
-    process.exit(ExitCode.SERVER_CRASH);
   }
-};
 
-export default {
-  init
-};
+  public async init(): Promise<void> {
+    try {
+      const port = envReader.get("HOST_PORT");
+      await this.#server.listen({
+        port: Number(port),
+        listenTextResolver: () => `Server listening on port ${port}.`
+      });
+    } catch (error) {
+      this.#server.log.error(error);
+      process.exit(ExitCode.SERVER_CRASH);
+    }
+  }
+}

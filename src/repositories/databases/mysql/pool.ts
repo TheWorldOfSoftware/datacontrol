@@ -13,13 +13,16 @@ export default class PoolWrapper {
 
   public constructor(
     host: string,
-    { username, password }: Readonly<Credentials>
+    { username, password }: Readonly<Credentials>,
+    defaultDatabase?: string
   ) {
     this.#config = {
       host,
       password,
       user: username
     };
+
+    if (defaultDatabase !== undefined) this.#config.database = defaultDatabase;
   }
 
   public connect(): void {
@@ -32,12 +35,12 @@ export default class PoolWrapper {
 
   public async query<T>(
     query: string
-  ): Promise<[T & RowDataPacket[], FieldPacket[]]> {
+  ): Promise<[(T & RowDataPacket)[], FieldPacket[]]> {
     if (this.#pool === undefined) {
       throw new Error("No connection available.");
     }
 
-    return await this.#pool.query<T & RowDataPacket[]>(query);
+    return await this.#pool.query<(T & RowDataPacket)[]>(query);
   }
 
   public throwIfUndefined(): void {

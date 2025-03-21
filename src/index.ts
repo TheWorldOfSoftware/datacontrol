@@ -1,7 +1,8 @@
+import Server from "./server/index.js";
 import env from "./env.js";
 
 env();
 
-const server = await import("./server/index.js");
+const server = new Server();
 
-await server.default.init();
+await server.init();

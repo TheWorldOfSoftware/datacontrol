@@ -1,6 +1,11 @@
-import type { FastifyRegister } from "fastify";
-import databases from "./databases.js";
+import DatabaseRoute from "./databases.js";
+import Route from "./index.js";
 
-export default (server: Readonly<{ register: FastifyRegister }>): void => {
-  server.register(databases, { prefix: "/databases" });
-};
+export default class RootRoute extends Route {
+  public register(): void {
+    this.instance.register(
+      (instance) => new DatabaseRoute(instance).register(),
+      { prefix: "/databases" }
+    );
+  }
+}
