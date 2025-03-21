@@ -11,4 +11,12 @@ const configurations = [
   eslintTypescript
 ];
 
-export default configurations;
+export default [
+  configurations,
+  {
+    files: ["src/server/**/*.ts"],
+    rules: {
+      "@typescript-eslint/prefer-readonly-parameters": "off"
+    }
+  }
+];
