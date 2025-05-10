@@ -5,9 +5,9 @@ import type {
   RawRequestDefaultExpression
 } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import type { Http2Server } from "node:http2";
+import type { Server } from "node:http";
 
-export type HttpServer = Http2Server;
+export type HttpServer = Server;
 type RequestExpression = RawRequestDefaultExpression<HttpServer>;
 type ResponseExpression = RawReplyDefaultExpression<HttpServer>;
 type Logger = FastifyBaseLogger;

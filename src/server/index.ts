@@ -13,7 +13,6 @@ export default class Server {
 
   public constructor() {
     this.#server = fastify({
-      http2: true,
       logger: true
     })
       .register<FastifyPluginOptions, HttpServer>(
