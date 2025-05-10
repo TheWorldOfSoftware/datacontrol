@@ -1,15 +1,13 @@
 import DatabaseModule from "../../../modules/database.js";
 import Route from "./index.js";
-import type {
-  MessageRequest,
-  RequestSchema,
-  ServerInstance
-} from "../../types/server.js";
+import type { ServerInstance } from "../../types/server.js";
 import Modules from "../../../modules/index.js";
 import Repository from "../../../repositories/index.js";
-import { parseDatabase } from "./schemas/database.js";
-import { parseUUID, type UUIDSchema } from "./schemas/uuid.js";
-import type { ZodTypeProvider } from "fastify-type-provider-zod";
+import {
+  bodyDatabaseSchema,
+  paramDatabaseIdSchema,
+  updateDatabaseSchema
+} from "./schemas/database.js";
 
 export default class DatabaseRoute extends Route {
   #databaseModule: DatabaseModule;
@@ -30,56 +28,50 @@ export default class DatabaseRoute extends Route {
       const databases = await this.#databaseModule.getDatabases();
       res.send(databases);
     });
-    this.instance.post("/", async (req, res) => {
-      const database = parseDatabase(req.body);
-      await this.#databaseModule.insertDatabase(database);
-      res.status(201).send({ message: "Database created" });
-    });
-    this.instance
-      .withTypeProvider<ZodTypeProvider>()
-      .get(
-        "/:database",
-        async (
-          req: MessageRequest<
-            RequestSchema<unknown, unknown, { database: UUIDSchema }>
-          >,
-          res
-        ) => {
-          const databaseId = parseUUID(req.params?.database);
-          const database = await this.#databaseModule.getDatabase(databaseId);
-          res.send(database);
-        }
-      );
-    this.instance
-      .withTypeProvider<ZodTypeProvider>()
-      .put(
-        "/:database",
-        async (
-          req: MessageRequest<
-            RequestSchema<unknown, unknown, { database: UUIDSchema }>
-          >,
-          res
-        ) => {
-          const database = parseDatabase(req.body);
-          const databaseId = parseUUID(req.params?.database);
-          await this.#databaseModule.updateDatabase(databaseId, database);
-          res.status(200).send({ message: "Database updated" });
-        }
-      );
-    this.instance
-      .withTypeProvider<ZodTypeProvider>()
-      .delete(
-        "/:database",
-        async (
-          req: MessageRequest<
-            RequestSchema<unknown, unknown, { database: UUIDSchema }>
-          >,
-          res
-        ) => {
-          const databaseId = parseUUID(req.params?.database);
-          await this.#databaseModule.deleteDatabase(databaseId);
-          res.status(200).send({ message: "Database deleted" });
-        }
-      );
+    this.instance.post(
+      "/",
+      {
+        schema: bodyDatabaseSchema
+      },
+      async (req, res) => {
+        await this.#databaseModule.insertDatabase(req.body);
+        res.status(201).send({ message: "Database created" });
+      }
+    );
+    this.instance.get(
+      "/:database",
+      {
+        schema: paramDatabaseIdSchema
+      },
+      async (req, res) => {
+        const database = await this.#databaseModule.getDatabase(
+          req.params.database
+        );
+        res.send(database);
+      }
+    );
+    this.instance.put(
+      "/:database",
+      {
+        schema: updateDatabaseSchema
+      },
+      async (req, res) => {
+        await this.#databaseModule.updateDatabase(
+          req.params.database,
+          req.body
+        );
+        res.status(200).send({ message: "Database updated" });
+      }
+    );
+    this.instance.delete(
+      "/:database",
+      {
+        schema: paramDatabaseIdSchema
+      },
+      async (req, res) => {
+        await this.#databaseModule.deleteDatabase(req.params.database);
+        res.status(200).send({ message: "Database deleted" });
+      }
+    );
   }
 }
