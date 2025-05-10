@@ -17,7 +17,8 @@
   },
   "dependencies": {
     "@worldofsoftware/dotenv-reader": "workspace:*",
-    "fastify": "^5.2.0",
+    "fastify": "^5.3.2",
+    "fastify-type-provider-zod": "^4.0.2",
     "mysql2": "^3.11.5",
     "zod": "^3.24.1"
   },

@@ -1,18 +1,29 @@
-import fastify from "fastify";
+import fastify, { type FastifyPluginOptions } from "fastify";
 import { ExitCode } from "../constants/exit-codes.js";
 import envReader from "@worldofsoftware/dotenv-reader";
 import RootRoute from "./routes/v1/root.js";
-import type { ServerInstance } from "./types/server.js";
+import type { HttpServer, ServerInstance } from "./types/server.js";
+import {
+  serializerCompiler,
+  validatorCompiler
+} from "fastify-type-provider-zod";
 
 export default class Server {
   readonly #server: ServerInstance;
 
   public constructor() {
     this.#server = fastify({
+      http2: true,
       logger: true
-    }).register((instance) => new RootRoute(instance).register(), {
-      prefix: "/api/v1"
-    });
+    })
+      .register<FastifyPluginOptions, HttpServer>(
+        (instance) => new RootRoute(instance).register(),
+        {
+          prefix: "/api/v1"
+        }
+      )
+      .setValidatorCompiler(validatorCompiler)
+      .setSerializerCompiler(serializerCompiler);
   }
 
   public async init(): Promise<void> {
