@@ -9,5 +9,8 @@ export default abstract class Route {
 
   public constructor(instance: ServerInstance) {
     this.#instance = instance;
+    this.register();
   }
+
+  protected abstract register(): void;
 }

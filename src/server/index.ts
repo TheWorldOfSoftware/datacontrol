@@ -16,7 +16,7 @@ export default class Server {
       logger: true
     })
       .register<FastifyPluginOptions, HttpServer>(
-        (instance) => new RootRoute(instance).register(),
+        (instance) => new RootRoute(instance),
         {
           prefix: "/api/v1"
         }

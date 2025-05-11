@@ -1,12 +1,12 @@
 import type Database from "../models/database.js";
 import type Module from "./module.js";
-import type Repository from "../repositories/index.js";
+import Repository from "../repositories/index.js";
 import type { UUID } from "node:crypto";
 
 export default class DatabaseModule implements Module {
   readonly #repository: Repository;
 
-  public constructor(repository: Repository) {
+  public constructor(repository: Repository = new Repository()) {
     this.#repository = repository;
   }
 

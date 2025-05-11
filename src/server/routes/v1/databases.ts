@@ -2,7 +2,6 @@ import DatabaseModule from "../../../modules/database.js";
 import Route from "./route.js";
 import type { ServerInstance } from "../../types/server.js";
 import Modules from "../../../modules/index.js";
-import Repository from "../../../repositories/index.js";
 import {
   bodyDatabaseSchema,
   paramDatabaseIdSchema,
@@ -14,16 +13,13 @@ export default class DatabaseRoute extends Route {
 
   public constructor(
     instance: ServerInstance,
-    databaseModule: DatabaseModule = Modules.get(
-      DatabaseModule,
-      new Repository()
-    )
+    databaseModule: DatabaseModule = Modules.get(DatabaseModule)
   ) {
     super(instance);
     this.#databaseModule = databaseModule;
   }
 
-  public register(): void {
+  protected register(): void {
     this.instance.get("/", async (_req, res) => {
       const databases = await this.#databaseModule.getDatabases();
       res.send(databases);
