@@ -1,5 +1,5 @@
 import DatabaseModule from "../../../modules/database.js";
-import Route from "./index.js";
+import Route from "./route.js";
 import type { ServerInstance } from "../../types/server.js";
 import Modules from "../../../modules/index.js";
 import Repository from "../../../repositories/index.js";

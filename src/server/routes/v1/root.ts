@@ -1,5 +1,5 @@
 import DatabaseRoute from "./databases.js";
-import Route from "./index.js";
+import Route from "./route.js";
 
 export default class RootRoute extends Route {
   public register(): void {
