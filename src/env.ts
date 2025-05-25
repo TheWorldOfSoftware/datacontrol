@@ -11,7 +11,13 @@ const env = z.object({
     .string()
     .refine((value): value is "development" | "production" =>
       ["development", "production"].includes(value)
-    )
+    ),
+  DC_UserAdmin_Username: z.string(),
+  DC_UserAdmin_Password: z.string(),
+  DC_UsernameRead_Username: z.string(),
+  DC_UsernameRead_Password: z.string(),
+  DC_PasswordRead_Username: z.string(),
+  DC_PasswordRead_Password: z.string()
 });
 
 export type NodeEnvExtension = z.infer<typeof env>;
