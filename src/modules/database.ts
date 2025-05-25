@@ -1,12 +1,15 @@
-import type Database from "../models/database.js";
+import type { DatabaseDTO } from "../dtos/database.js";
 import type Module from "./module.js";
-import Repository from "../repositories/index.js";
+import DatabaseRepository from "../repositories/database.js";
 import type { UUID } from "node:crypto";
+import type DTO from "../dtos/index.js";
 
 export default class DatabaseModule implements Module {
-  readonly #repository: Repository;
+  readonly #repository: DatabaseRepository;
 
-  public constructor(repository: Repository = new Repository()) {
+  public constructor(
+    repository: DatabaseRepository = new DatabaseRepository()
+  ) {
     this.#repository = repository;
   }
 
@@ -14,19 +17,22 @@ export default class DatabaseModule implements Module {
     this.#repository.init();
   }
 
-  public async getDatabases(): Promise<Database[]> {
+  public async getDatabases(): Promise<DTO<DatabaseDTO>[]> {
     return await this.#repository.getDatabases();
   }
 
-  public async getDatabase(databaseId: UUID): Promise<Database> {
+  public async getDatabase(databaseId: UUID): Promise<DTO<DatabaseDTO>> {
     return await this.#repository.getDatabase(databaseId);
   }
 
-  public async insertDatabase(datbase: Database): Promise<void> {
+  public async insertDatabase(datbase: DTO<DatabaseDTO>): Promise<void> {
     await this.#repository.insertDatabase(datbase);
   }
 
-  public async updateDatabase(id: UUID, database: Database): Promise<void> {
+  public async updateDatabase(
+    id: UUID,
+    database: DTO<DatabaseDTO>
+  ): Promise<void> {
     await this.#repository.updateDatabase(id, database);
   }
 

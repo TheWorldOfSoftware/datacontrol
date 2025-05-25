@@ -1,15 +1,23 @@
+import type { DatabaseDTO } from "../../../../dtos/database.js";
 import type { UUID } from "node:crypto";
-import Database from "../../../../models/database.js";
+import DTO from "../../../../dtos/index.js";
 import { z } from "zod";
 
 const databaseSchema = z
   .object({
     id: z.string().uuid() as z.ZodType<UUID>,
     name: z.string(),
-    host: z.string()
+    host: z.string(),
+    admin: z.string(),
+    password: z.string()
   })
-  .transform((obj) => {
-    return new Database(obj.id as UUID, obj.name, obj.host);
+  .transform(({ id, name, host, admin, password }) => {
+    return new DTO<DatabaseDTO>(id, {
+      name: name,
+      host: host,
+      admin: admin,
+      password: password
+    });
   });
 
 const databaseIdSchema = z.object({
