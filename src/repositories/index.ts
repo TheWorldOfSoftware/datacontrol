@@ -1,17 +1,16 @@
 import type { UUID } from "node:crypto";
 import Database from "../models/database.js";
 import MySQL from "./databases/mysql/index.js";
-import envReader from "@worldofsoftware/dotenv-reader";
 
 export default class Repository {
   private readonly mysql: MySQL;
 
   public constructor() {
     this.mysql = new MySQL(
-      envReader.get("MY_SQL_HOST"),
+      process.env.MY_SQL_HOST,
       {
-        username: envReader.get("MY_SQL_USERNAME"),
-        password: envReader.get("MY_SQL_PASSWORD")
+        username: process.env.MY_SQL_USERNAME,
+        password: process.env.MY_SQL_PASSWORD
       },
       "data-control"
     );

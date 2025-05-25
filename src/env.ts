@@ -1,7 +1,6 @@
-import envReader from "@worldofsoftware/dotenv-reader";
 import { z } from "zod";
 
-const env = z.object({
+const envSchema = z.object({
   HOST_PORT: z.string().regex(/^\d{1,4}$/u),
   MY_SQL_HOST: z.string(),
   MY_SQL_PASSWORD: z.string(),
@@ -20,9 +19,5 @@ const env = z.object({
   DC_PasswordRead_Password: z.string()
 });
 
-export type NodeEnvExtension = z.infer<typeof env>;
-
-export default function (): NodeEnvExtension {
-  envReader.loadEnv();
-  return env.parse(process.env);
-}
+export type NodeEnvExtension = z.infer<typeof envSchema>;
+export default envSchema;

@@ -1,7 +1,8 @@
+import envReader from "@worldofsoftware/dotenv-reader";
 import Server from "./server/index.js";
-import env from "./env.js";
+import envSchema from "./env.js";
 
-env();
+envReader.load(envSchema);
 
 const server = new Server();
 
