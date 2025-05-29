@@ -7,15 +7,15 @@ export default class Modules {
   >();
 
   public static get<T extends Module>(
-    module: new (...args: any[]) => T,
+    Module: new (...args: any[]) => T,
     ...args: any[]
   ): T {
-    if (!Modules.#initializedModules.has(module)) {
-      const newModule = new module(...args);
+    if (!Modules.#initializedModules.has(Module)) {
+      const newModule = new Module(...args);
       newModule.init();
-      Modules.#initializedModules.set(module, newModule);
+      Modules.#initializedModules.set(Module, newModule);
     }
 
-    return Modules.#initializedModules.get(module) as T;
+    return Modules.#initializedModules.get(Module) as T;
   }
 }
