@@ -1,6 +1,6 @@
 import mysql, {
   type FieldPacket,
-  type Pool as MySQLPool,
+  type Pool,
   type PoolOptions,
   type RowDataPacket
 } from "mysql2/promise";
@@ -9,7 +9,7 @@ import type { Credentials } from "../../../types/credentials.js";
 export default class PoolWrapper {
   readonly #config: PoolOptions;
 
-  #pool?: MySQLPool;
+  #pool?: Pool;
 
   public constructor(
     host: string,

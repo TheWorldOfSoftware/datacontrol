@@ -1,8 +1,9 @@
 import type { UUID } from "node:crypto";
 import type { DatabaseDTO } from "../dtos/database.js";
-import MySQL from "./databases/mysql/index.js";
-import type Repository from "./index.js";
+import MySQL from "./database-connectors/mysql/index.js";
+import type Repository from "./repository.js";
 import DTO from "../dtos/index.js";
+import type { DatabaseTable } from "./tables/data-control/database.js";
 
 export default class DatabaseRepository implements Repository {
   private readonly mysql: MySQL;
@@ -25,15 +26,9 @@ export default class DatabaseRepository implements Repository {
   }
 
   public async getDatabases(): Promise<DTO<DatabaseDTO>[]> {
-    const [databases] = await this.mysql.query<{
-      Id: UUID;
-      Name: string;
-      Host: string;
-      Admin: string;
-      Password: string;
-    }>(
-      `SELECT BIN_TO_UUID(Id) AS Id, Name, Host, Admin, Password FROM \`Database\`;`
-    );
+    const [databases] = await this.mysql.select<DatabaseTable>("Database", [
+      "*"
+    ]);
 
     return databases.map(
       (database) =>
@@ -47,21 +42,17 @@ export default class DatabaseRepository implements Repository {
   }
 
   public async getDatabase(id: UUID): Promise<DTO<DatabaseDTO>> {
-    const [databases] = await this.mysql.query<{
-      Id: UUID;
-      Name: string;
-      Host: string;
-      Admin: string;
-      Password: string;
-    }>(
-      `SELECT BIN_TO_UUID(Id) AS Id, Name, Host, Admin, Password FROM \`Database\` WHERE Id = ${id};`
+    const [databases] = await this.mysql.select<DatabaseTable>(
+      "Database",
+      ["Name", "Host", "Admin", "Password"],
+      [["Id", id]]
     );
 
     if (databases[0] === undefined) {
       throw new Error("Database not found");
     }
 
-    return new DTO<DatabaseDTO>(databases[0].Id, {
+    return new DTO<DatabaseDTO>(id, {
       name: databases[0].Name,
       host: databases[0].Host,
       admin: databases[0].Admin,
