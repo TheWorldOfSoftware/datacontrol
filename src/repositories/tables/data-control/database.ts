@@ -9,4 +9,12 @@ type DatabaseColumns = {
   Password: string;
 };
 
+export const DatabaseColumns = [
+  "Id",
+  "Name",
+  "Host",
+  "Admin",
+  "Password"
+] as const satisfies ReadonlyArray<keyof DatabaseColumns>;
+
 export type DatabaseTable = Table<DatabaseColumns>;

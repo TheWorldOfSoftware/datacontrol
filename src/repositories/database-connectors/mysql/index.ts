@@ -1,3 +1,5 @@
+import type { Tables } from "../../tables/data-control/index.js";
+import tables from "../../tables/data-control/index.js";
 import type Table from "../../tables/table.js";
 import type DatabaseConnector from "../database-connector.js";
 import Pool from "./pool.js";
@@ -19,31 +21,46 @@ export default class MySQL implements DatabaseConnector {
     await this.#pool.disconnect();
   }
 
-  public async select<TTable extends Table<Record<string, unknown>>>(
-    source: TTable["Name"],
-    columns:
-      | (keyof TTable["Columns"] extends string
-          ? keyof TTable["Columns"]
-          : never)[]
-      | ["*"] = ["*"],
-    where?: [string, string][]
+  public async select<
+    TTable extends Table<Record<string, unknown>>,
+    TColumns extends Extract<
+      Tables,
+      { Name: Tables["Name"] }
+    >["Columns"][number] = Extract<
+      Tables,
+      { Name: Tables["Name"] }
+    >["Columns"][number]
+  >(
+    source: Tables["Name"],
+    columns: TColumns[] | ["*"] = ["*"],
+    where?: [TColumns, string][]
   ): ReturnType<typeof Pool.prototype.query<TTable["Columns"]>> {
     this.#pool.throwIfUndefined();
 
     const select =
       columns[0] === "*"
-        ? Object.values(columns).map((column) =>
-            column.endsWith("Id")
-              ? `BIN_TO_UUID(${column}) AS ${column}`
-              : column
-          )
+        ? tables
+            .find((database) => database.Name === source)!
+            .Columns.map((column) =>
+              column.endsWith("Id")
+                ? `BIN_TO_UUID(${column}) AS ${column}`
+                : column
+            )
         : columns.map((column) =>
             column.endsWith("Id")
               ? `BIN_TO_UUID(${column}) AS ${column}`
               : `${column}`
           );
 
-    const query = `SELECT ${select} FROM \`data-control\`.\`${source}\` ${where?.length ? `WHERE ${where.map(([key, value]) => `\`${key}\` = '${value}'`).join(" AND ")}` : ""};`;
+    const query = `SELECT ${select.join()} FROM \`data-control\`.\`${source}\`${
+      where?.length
+        ? ` WHERE ${where
+            .map(([key, value]) => `\`${key}\` = '${value}'`)
+            .join(" AND ")}`
+        : ""
+    };`;
+
+    console.log("DEBUG:", query);
 
     return await this.#pool.query<TTable["Columns"]>(query);
   }
