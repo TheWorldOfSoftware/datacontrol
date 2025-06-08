@@ -1,5 +1,4 @@
 import type { Tables } from "../../tables/data-control/index.js";
-import tables from "../../tables/data-control/index.js";
 import type DatabaseConnector from "../database-connector.js";
 import Pool from "./pool.js";
 
@@ -34,22 +33,7 @@ export default class MySQL implements DatabaseConnector {
   > {
     this.#pool.throwIfUndefined();
 
-    const select =
-      columns[0] === "*"
-        ? tables
-            .find((database) => database.Name === source)!
-            .Columns.map((column) =>
-              column.endsWith("Id")
-                ? `BIN_TO_UUID(${column}) AS ${column}`
-                : column
-            )
-        : columns.map((column) =>
-            column.endsWith("Id")
-              ? `BIN_TO_UUID(${column}) AS ${column}`
-              : `${column}`
-          );
-
-    const query = `SELECT ${select.join()} FROM \`data-control\`.\`${source}\`${
+    const query = `SELECT ${columns.join()} FROM \`data-control\`.\`${source}\`${
       where?.length
         ? ` WHERE ${where
             .map(([key, value]) => `\`${key}\` = '${value}'`)

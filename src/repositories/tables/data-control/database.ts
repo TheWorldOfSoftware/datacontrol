@@ -7,11 +7,3 @@ export type Database = {
   Admin: string;
   Password: string;
 };
-
-export const database = [
-  "Id",
-  "Name",
-  "Host",
-  "Admin",
-  "Password"
-] as const satisfies ReadonlyArray<keyof Database>;

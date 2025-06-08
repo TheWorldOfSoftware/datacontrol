@@ -5,9 +5,3 @@ export type Organisation = {
   Name: string;
   Image: string;
 };
-
-export const organisation = [
-  "Id",
-  "Name",
-  "Image"
-] as const satisfies ReadonlyArray<keyof Organisation>;
