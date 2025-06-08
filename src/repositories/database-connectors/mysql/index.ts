@@ -1,6 +1,5 @@
 import type { Tables } from "../../tables/data-control/index.js";
 import tables from "../../tables/data-control/index.js";
-import type Table from "../../tables/table.js";
 import type DatabaseConnector from "../database-connector.js";
 import Pool from "./pool.js";
 
@@ -22,19 +21,17 @@ export default class MySQL implements DatabaseConnector {
   }
 
   public async select<
-    TTable extends Table<Record<string, unknown>>,
-    TColumns extends Extract<
-      Tables,
-      { Name: Tables["Name"] }
-    >["Columns"][number] = Extract<
-      Tables,
-      { Name: Tables["Name"] }
-    >["Columns"][number]
+    TTable extends Tables["Name"],
+    TTableExtract extends Extract<Tables, { Name: TTable }>["Columns"],
+    TColumnNames extends keyof TTableExtract,
+    TWhere extends TTableExtract
   >(
-    source: Tables["Name"],
-    columns: TColumns[] | ["*"] = ["*"],
-    where?: [TColumns, string][]
-  ): ReturnType<typeof Pool.prototype.query<TTable["Columns"]>> {
+    source: TTable,
+    columns: (TColumnNames & string)[] | ["*"] = ["*"],
+    where?: [keyof TWhere & string, string][]
+  ): ReturnType<
+    typeof Pool.prototype.query<Pick<TTableExtract, TColumnNames>>
+  > {
     this.#pool.throwIfUndefined();
 
     const select =
@@ -62,7 +59,7 @@ export default class MySQL implements DatabaseConnector {
 
     console.log("DEBUG:", query);
 
-    return await this.#pool.query<TTable["Columns"]>(query);
+    return await this.#pool.query<TTableExtract>(query);
   }
 
   // public async insert<T extends Record<string, unknown>>(

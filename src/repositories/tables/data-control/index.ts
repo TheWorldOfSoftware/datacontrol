@@ -1,19 +1,29 @@
-import { DatabaseColumns } from "./database.js";
-import { OrganisationColumns } from "./organisation.js";
+import { database, type Database } from "./database.js";
+import { organisation, type Organisation } from "./organisation.js";
+
+export type Tables = [
+  {
+    Name: "Database";
+    Columns: Database;
+  },
+  {
+    Name: "Organisation";
+    Columns: Organisation;
+  }
+][number];
 
 const tables = [
   {
     Name: "Database",
-    Columns: DatabaseColumns
+    Columns: database
   },
   {
     Name: "Organisation",
-    Columns: OrganisationColumns
+    Columns: organisation
   }
 ] as const satisfies ReadonlyArray<{
-  Name: string;
-  Columns: ReadonlyArray<string>;
+  Name: Tables["Name"];
+  Columns: ReadonlyArray<Tables["Columns"][keyof Tables["Columns"]]>;
 }>;
 
 export default tables;
-export type Tables = (typeof tables)[number];

@@ -3,7 +3,6 @@ import type { DatabaseDTO } from "../dtos/database.js";
 import MySQL from "./database-connectors/mysql/index.js";
 import type Repository from "./repository.js";
 import DTO from "../dtos/index.js";
-import type { DatabaseTable } from "./tables/data-control/database.js";
 
 export default class DatabaseRepository implements Repository {
   private readonly mysql: MySQL;
@@ -26,9 +25,7 @@ export default class DatabaseRepository implements Repository {
   }
 
   public async getDatabases(): Promise<DTO<DatabaseDTO>[]> {
-    const [databases] = await this.mysql.select<DatabaseTable>("Database", [
-      "*"
-    ]);
+    const [databases] = await this.mysql.select("Database");
 
     return databases.map(
       (database) =>
@@ -42,7 +39,7 @@ export default class DatabaseRepository implements Repository {
   }
 
   public async getDatabase(id: UUID): Promise<DTO<DatabaseDTO>> {
-    const [databases] = await this.mysql.select<DatabaseTable>(
+    const [databases] = await this.mysql.select(
       "Database",
       ["Name", "Host", "Admin", "Password"],
       [["Id", id]]

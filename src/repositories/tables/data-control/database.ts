@@ -1,7 +1,6 @@
 import type { UUID } from "node:crypto";
-import type Table from "../table.js";
 
-type DatabaseColumns = {
+export type Database = {
   Id: UUID;
   Name: string;
   Host: string;
@@ -9,12 +8,10 @@ type DatabaseColumns = {
   Password: string;
 };
 
-export const DatabaseColumns = [
+export const database = [
   "Id",
   "Name",
   "Host",
   "Admin",
   "Password"
-] as const satisfies ReadonlyArray<keyof DatabaseColumns>;
-
-export type DatabaseTable = Table<DatabaseColumns>;
+] as const satisfies ReadonlyArray<keyof Database>;

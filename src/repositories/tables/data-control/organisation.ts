@@ -1,16 +1,13 @@
 import type { UUID } from "node:crypto";
-import type Table from "../table.js";
 
-type OrganisationColumns = {
+export type Organisation = {
   Id: UUID;
   Name: string;
   Image: string;
 };
 
-export const OrganisationColumns = [
+export const organisation = [
   "Id",
   "Name",
   "Image"
-] as const satisfies ReadonlyArray<keyof OrganisationColumns>;
-
-export type OrganisationTable = Table<OrganisationColumns>;
+] as const satisfies ReadonlyArray<keyof Organisation>;
