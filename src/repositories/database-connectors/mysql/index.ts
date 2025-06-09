@@ -1,3 +1,4 @@
+import { escape } from "mysql2/promise";
 import type { Tables } from "../../tables/data-control/index.js";
 import type DatabaseConnector from "../database-connector.js";
 import Pool from "./pool.js";
@@ -17,6 +18,26 @@ export default class MySQL implements DatabaseConnector {
     this.#pool.throwIfUndefined();
 
     await this.#pool.disconnect();
+  }
+
+  public async insert<
+    TTable extends Tables["Name"],
+    TColumns extends Partial<Extract<Tables, { Name: TTable }>["Columns"]>
+  >(source: TTable, data: TColumns): ReturnType<typeof Pool.prototype.query> {
+    this.#pool.throwIfUndefined();
+
+    const [columns, values] = Object.entries(data).reduce(
+      ([cols, vals], [key, value]) => {
+        cols.push(escape(key));
+        vals.push(escape(value));
+        return [cols, vals];
+      },
+      [[], []] as [string[], string[]]
+    );
+
+    const query = `INSERT INTO \`data-control\`.\`${source}\` (${columns.join()}) VALUES (${values.join()});`;
+
+    return await this.#pool.query(query);
   }
 
   public async select<

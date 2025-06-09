@@ -58,9 +58,12 @@ export default class DatabaseRepository implements Repository {
   }
 
   public async insertDatabase(database: DatabaseDTO): Promise<void> {
-    await this.mysql.query(
-      `INSERT INTO \`Database\` (Id, Name, Host, Admin, Password) VALUES (UUID_TO_BIN(UUID()), ${database.name}, ${database.host}, ${database.admin}, ${database.password});`
-    );
+    await this.mysql.insert("Database", {
+      Name: database.name,
+      Host: database.host,
+      Admin: database.admin,
+      Password: database.password
+    });
   }
 
   public async updateDatabase(id: UUID, database: DatabaseDTO): Promise<void> {
