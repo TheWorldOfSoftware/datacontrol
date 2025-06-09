@@ -48,4 +48,10 @@ export default class PoolWrapper {
       throw new Error("No connection to disconnect.");
     }
   }
+
+  public throwIfDefaultDatabaseUndefined(): void {
+    if (this.#config.database === undefined) {
+      throw new Error("Default database is not set.");
+    }
+  }
 }

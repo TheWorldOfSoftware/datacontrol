@@ -23,8 +23,16 @@ export default class MySQL implements DatabaseConnector {
   public async insert<
     TTable extends Tables["Name"],
     TColumns extends Partial<Extract<Tables, { Name: TTable }>["Columns"]>
-  >(source: TTable, data: TColumns): ReturnType<typeof Pool.prototype.query> {
+  >(
+    table: TTable,
+    data: TColumns,
+    source?: string
+  ): ReturnType<typeof Pool.prototype.query> {
     this.#pool.throwIfUndefined();
+
+    if (source === undefined) {
+      this.#pool.throwIfDefaultDatabaseUndefined();
+    }
 
     const [columns, values] = Object.entries(data).reduce(
       ([cols, vals], [key, value]) => {
@@ -35,53 +43,39 @@ export default class MySQL implements DatabaseConnector {
       [[], []] as [string[], string[]]
     );
 
-    const query = `INSERT INTO \`data-control\`.\`${source}\` (${columns.join()}) VALUES (${values.join()});`;
+    const query = `INSERT INTO ${source ? `\`${source}\`.` : ""}\`${table}\` (${columns.join()}) VALUES (${values.join()});`;
 
     return await this.#pool.query(query);
   }
 
   public async select<
     TTable extends Tables["Name"],
-    TTableExtract extends Extract<Tables, { Name: TTable }>["Columns"],
-    TColumnNames extends keyof TTableExtract,
-    TWhere extends TTableExtract
+    TColumns extends Extract<Tables, { Name: TTable }>["Columns"],
+    TColumnNames extends keyof TColumns,
+    TWhere extends TColumns
   >(
-    source: TTable,
+    table: TTable,
     columns: (TColumnNames & string)[] | ["*"] = ["*"],
-    where?: [keyof TWhere & string, string][]
-  ): ReturnType<
-    typeof Pool.prototype.query<Pick<TTableExtract, TColumnNames>>
-  > {
+    where: [keyof TWhere & string, string][] = [],
+    source?: string
+  ): ReturnType<typeof Pool.prototype.query<Pick<TColumns, TColumnNames>>> {
     this.#pool.throwIfUndefined();
 
-    const query = `SELECT ${columns.join()} FROM \`data-control\`.\`${source}\`${
-      where?.length
-        ? ` WHERE ${where
-            .map(([key, value]) => `\`${key}\` = '${value}'`)
-            .join(" AND ")}`
-        : ""
+    if (source === undefined) {
+      this.#pool.throwIfDefaultDatabaseUndefined();
+    }
+
+    const filterWhere = where.reduce((filter, [key, value]) => {
+      filter.push(`${escape(key)} = ${escape(value)}`);
+      return filter;
+    }, [] as string[]);
+
+    const query = `SELECT ${columns.join()} FROM ${source ? `\`${source}\`.` : ""}\`${table}\`${
+      where.length ? ` WHERE ${filterWhere.join(" AND ")}` : ""
     };`;
 
-    console.log("DEBUG:", query);
-
-    return await this.#pool.query<TTableExtract>(query);
+    return await this.#pool.query<TColumns>(query);
   }
-
-  // public async insert<T extends Record<string, unknown>>(
-  //   source: string,
-  //   data: T
-  // ): ReturnType<typeof Pool.prototype.query<T>> {
-  //   this.#pool.throwIfUndefined();
-
-  //   const columns = Object.keys(data).map((key) => `\`${key}\``).join(", ");
-  //   const values = Object.values(data)
-  //     .map((value) => (typeof value === "string" ? `'${value}'` : value))
-  //     .join(", ");
-
-  //   const query = `INSERT INTO \`data-control\`.\`${source}\` (${columns}) VALUES (${values});`;
-
-  //   return await this.#pool.query<T>(query);
-  // }
 
   public async query<T>(
     query: string
