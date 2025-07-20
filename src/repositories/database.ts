@@ -25,11 +25,19 @@ export default class DatabaseRepository implements Repository {
   }
 
   public async getDatabases(): Promise<DTO<DatabaseDTO>[]> {
-    const [databases] = await this.mysql.select("Database");
+    const [databases] = await this.mysql.select("Database", [
+      "Id",
+      "Name",
+      "OrganisationId",
+      "Host",
+      "Admin",
+      "Password"
+    ]);
 
     return databases.map(
       (database) =>
         new DTO<DatabaseDTO>(database.Id, {
+          organisationId: database.OrganisationId,
           name: database.Name,
           host: database.Host,
           admin: database.Admin,
@@ -41,7 +49,7 @@ export default class DatabaseRepository implements Repository {
   public async getDatabase(id: UUID): Promise<DTO<DatabaseDTO>> {
     const [databases] = await this.mysql.select(
       "Database",
-      ["Name", "Host", "Admin", "Password"],
+      ["Name", "OrganisationId", "Host", "Admin", "Password"],
       [["Id", id]]
     );
 
@@ -50,6 +58,7 @@ export default class DatabaseRepository implements Repository {
     }
 
     return new DTO<DatabaseDTO>(id, {
+      organisationId: databases[0].OrganisationId,
       name: databases[0].Name,
       host: databases[0].Host,
       admin: databases[0].Admin,
@@ -59,6 +68,7 @@ export default class DatabaseRepository implements Repository {
 
   public async insertDatabase(database: DatabaseDTO): Promise<void> {
     await this.mysql.insert("Database", {
+      OrganisationId: database.organisationId,
       Name: database.name,
       Host: database.host,
       Admin: database.admin,
@@ -67,14 +77,21 @@ export default class DatabaseRepository implements Repository {
   }
 
   public async updateDatabase(id: UUID, database: DatabaseDTO): Promise<void> {
-    await this.mysql.query(
-      `UPDATE \`Database\` SET Name = ${database.name}, Host = ${database.host}, Admin = ${database.admin}, Password = ${database.password} WHERE Id = UUID_TO_BIN(${id});`
+    await this.mysql.update(
+      "Database",
+      {
+        OrganisationId: database.organisationId,
+        Name: database.name,
+        Host: database.host,
+        Admin: database.admin,
+        Password: database.password
+      },
+      [["Id", id]],
+      "data-control"
     );
   }
 
   public async deleteDatabase(id: UUID): Promise<void> {
-    await this.mysql.query(
-      `DELETE FROM \`Database\` WHERE Id = UUID_TO_BIN(${id});`
-    );
+    await this.mysql.delete("Database", [["Id", id]], "data-control");
   }
 }

@@ -17,4 +17,11 @@ export default class DTO<T extends Record<string, any>> {
     this.#id = id;
     this.#properties = Object.freeze(properties);
   }
+
+  public toJSON(): Record<string, any> {
+    return {
+      id: this.#id,
+      ...this.#properties
+    };
+  }
 }
