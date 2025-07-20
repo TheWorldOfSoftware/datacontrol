@@ -10,13 +10,11 @@ export default class MySQL implements DatabaseConnector {
     this.#pool = new Pool(...args);
   }
 
-  public connect(): void {
+  public async connect(): Promise<void> {
     this.#pool.connect();
   }
 
   public async disconnect(): Promise<void> {
-    this.#pool.throwIfUndefined();
-
     await this.#pool.disconnect();
   }
 
@@ -28,8 +26,6 @@ export default class MySQL implements DatabaseConnector {
     data: TColumns,
     source?: string
   ): ReturnType<typeof Pool.prototype.query> {
-    this.#pool.throwIfUndefined();
-
     if (source === undefined) {
       this.#pool.throwIfDefaultDatabaseUndefined();
     }
@@ -59,8 +55,6 @@ export default class MySQL implements DatabaseConnector {
     where: [keyof TWhere & string, string][] = [],
     source?: string
   ): ReturnType<typeof Pool.prototype.query<Pick<TColumns, TColumnNames>>> {
-    this.#pool.throwIfUndefined();
-
     if (source === undefined) {
       this.#pool.throwIfDefaultDatabaseUndefined();
     }
@@ -80,8 +74,6 @@ export default class MySQL implements DatabaseConnector {
   public async query<T>(
     query: string
   ): ReturnType<typeof Pool.prototype.query<T>> {
-    this.#pool.throwIfUndefined();
-
     return await this.#pool.query<T>(query);
   }
 }

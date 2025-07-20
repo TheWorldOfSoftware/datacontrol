@@ -1,4 +1,4 @@
 export default interface DatabaseConnector {
-  connect: () => void;
+  connect: () => Promise<void>;
   disconnect: () => Promise<void>;
 }
