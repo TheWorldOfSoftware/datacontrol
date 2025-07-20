@@ -35,37 +35,37 @@ export default class DatabaseRoute extends Route {
       }
     );
     this.instance.get(
-      "/:database",
+      "/:databaseId",
       {
         schema: paramDatabaseIdSchema
       },
       async (req, res) => {
         const database = await this.#databaseModule.getDatabase(
-          req.params.database
+          req.params.databaseId
         );
         res.send(database);
       }
     );
     this.instance.put(
-      "/:database",
+      "/:databaseId",
       {
         schema: updateDatabaseSchema
       },
       async (req, res) => {
         await this.#databaseModule.updateDatabase(
-          req.params.database,
+          req.params.databaseId,
           req.body
         );
         res.status(200).send({ message: "Database updated" });
       }
     );
     this.instance.delete(
-      "/:database",
+      "/:databaseId",
       {
         schema: paramDatabaseIdSchema
       },
       async (req, res) => {
-        await this.#databaseModule.deleteDatabase(req.params.database);
+        await this.#databaseModule.deleteDatabase(req.params.databaseId);
         res.status(200).send({ message: "Database deleted" });
       }
     );

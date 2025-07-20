@@ -1,19 +1,16 @@
 import type { UUID } from "node:crypto";
-import Database from "../../../../models/database.js";
 import { z } from "zod";
 
-const databaseSchema = z
-  .object({
-    id: z.string().uuid() as z.ZodType<UUID>,
-    name: z.string(),
-    host: z.string()
-  })
-  .transform((obj) => {
-    return new Database(obj.id as UUID, obj.name, obj.host);
-  });
+const databaseSchema = z.object({
+  organisationId: z.string().uuid() as z.ZodType<UUID>,
+  name: z.string(),
+  host: z.string(),
+  admin: z.string(),
+  password: z.string()
+});
 
 const databaseIdSchema = z.object({
-  database: z.string().uuid() as z.ZodType<UUID>
+  databaseId: z.string().uuid() as z.ZodType<UUID>
 });
 
 export const paramDatabaseIdSchema = {

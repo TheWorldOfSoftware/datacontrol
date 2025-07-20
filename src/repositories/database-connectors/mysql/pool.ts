@@ -1,6 +1,6 @@
 import mysql, {
   type FieldPacket,
-  type Pool as MySQLPool,
+  type Pool,
   type PoolOptions,
   type RowDataPacket
 } from "mysql2/promise";
@@ -9,7 +9,7 @@ import type { Credentials } from "../../../types/credentials.js";
 export default class PoolWrapper {
   readonly #config: PoolOptions;
 
-  #pool?: MySQLPool;
+  #pool: Pool;
 
   public constructor(
     host: string,
@@ -23,6 +23,8 @@ export default class PoolWrapper {
     };
 
     if (defaultDatabase !== undefined) this.#config.database = defaultDatabase;
+
+    this.#pool = mysql.createPool(this.#config);
   }
 
   public connect(): void {
@@ -30,22 +32,18 @@ export default class PoolWrapper {
   }
 
   public async disconnect(): Promise<void> {
-    await this.#pool?.end();
+    await this.#pool.end();
   }
 
   public async query<T>(
     query: string
   ): Promise<[(T & RowDataPacket)[], FieldPacket[]]> {
-    if (this.#pool === undefined) {
-      throw new Error("No connection available.");
-    }
-
     return await this.#pool.query<(T & RowDataPacket)[]>(query);
   }
 
-  public throwIfUndefined(): void {
-    if (this.#pool === undefined) {
-      throw new Error("No connection to disconnect.");
+  public throwIfDefaultDatabaseUndefined(): void {
+    if (this.#config.database === undefined) {
+      throw new Error("Default database is not set.");
     }
   }
 }
